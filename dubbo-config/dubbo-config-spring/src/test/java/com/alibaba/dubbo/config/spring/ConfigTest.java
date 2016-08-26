@@ -860,9 +860,7 @@ public class ConfigTest {
 
             Assert.assertEquals(port, service.getExportedUrls().get(0).getPort());
         } finally {
-            if (StringUtils.isNotEmpty(dubboPort)) {
-                System.setProperty("dubbo.protocol.dubbo.port", dubboPort);
-            }
+            System.setProperty("dubbo.protocol.dubbo.port", dubboPort);
             if (service != null) {
                 service.unexport();
             }
