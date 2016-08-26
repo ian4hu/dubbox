@@ -40,11 +40,11 @@ public class ClientReconnectTest {
     public void testReconnect() throws RemotingException, InterruptedException{
         {
             int port = NetUtils.getAvailablePort();
-            Client client = startClient(port, 200);
+            Client client = startClient(port, 500);
             Assert.assertEquals(false, client.isConnected());
             Server server = startServer(port);
             for (int i = 0; i < 100 && ! client.isConnected(); i++) {
-                Thread.sleep(10);
+                Thread.sleep(500);
             }
             Assert.assertEquals(true, client.isConnected());
             client.close(2000);
@@ -63,7 +63,7 @@ public class ClientReconnectTest {
             server.close(2000);
         }
     }
-    
+
     /**
      * 重连日志的校验，时间不够shutdown time时，不能有error日志，但必须有一条warn日志
      */
@@ -72,7 +72,8 @@ public class ClientReconnectTest {
         int port = NetUtils.getAvailablePort();
         DubboAppender.doStart();
         String url = "exchange://127.0.0.2:"+port + "/client.reconnect.test?check=false&"
-        +Constants.RECONNECT_KEY+"="+1 ; //1ms reconnect,保证有足够频率的重连
+        +Constants.RECONNECT_KEY+"="+800 + //800ms reconnect,保证有足够频率的重连
+        "&reconnect.waring.period=500";
         try{
             Exchangers.connect(url);
         }catch (Exception e) {
@@ -85,7 +86,7 @@ public class ClientReconnectTest {
         Assert.assertEquals("must have one warn message ", 1 , LogUtil.findMessage(Level.WARN, "client reconnect to "));
         DubboAppender.doStop();
     }
-  
+
     /**
      * 重连日志的校验，不能一直抛出error日志.
      */
@@ -94,8 +95,9 @@ public class ClientReconnectTest {
         int port = NetUtils.getAvailablePort();
         DubboAppender.doStart();
         String url = "exchange://127.0.0.3:"+port + "/client.reconnect.test?check=false&"
-        +Constants.RECONNECT_KEY+"="+1 + //1ms reconnect,保证有足够频率的重连
-        "&"+Constants.SHUTDOWN_TIMEOUT_KEY+ "=1";//shutdown时间足够短，确保error日志输出
+        +Constants.RECONNECT_KEY+"="+10 + //1ms reconnect,保证有足够频率的重连
+        "&"+Constants.SHUTDOWN_TIMEOUT_KEY+ "=100" + //shutdown时间足够短，确保error日志输出
+        "&reconnect.waring.period=500";
         try{
             Exchangers.connect(url);
         }catch (Exception e) {
@@ -105,7 +107,7 @@ public class ClientReconnectTest {
         Assert.assertEquals("only one error message ", 1 , LogUtil.findMessage(Level.ERROR, "client reconnect to "));
         DubboAppender.doStop();
     }
-    
+
     /**
      * 测试client重连方法不会导致重连线程失效.
      */
@@ -113,8 +115,8 @@ public class ClientReconnectTest {
     public void testClientReconnectMethod() throws RemotingException, InterruptedException{
         int port = NetUtils.getAvailablePort();
         String url = "exchange://127.0.0.3:"+port + "/client.reconnect.test?check=false&"
-        +Constants.RECONNECT_KEY+"="+10 //1ms reconnect,保证有足够频率的重连
-        +"&reconnect.waring.period=1";
+        +Constants.RECONNECT_KEY+"="+10 + //1ms reconnect,保证有足够频率的重连
+        "&reconnect.waring.period=500";
         DubboAppender.doStart();
         Client client = Exchangers.connect(url);
         try {
@@ -129,7 +131,7 @@ public class ClientReconnectTest {
     public static void main(String[] args) {
 		System.out.println(3%1);
 	}
-    
+
     /**
      * 重连日志的校验
      */
@@ -138,9 +140,9 @@ public class ClientReconnectTest {
         int port = NetUtils.getAvailablePort();
         DubboAppender.doStart();
         String url = "exchange://127.0.0.4:"+port + "/client.reconnect.test?check=false&"
-        +Constants.RECONNECT_KEY+"="+1 //1ms reconnect,保证有足够频率的重连
+        +Constants.RECONNECT_KEY+"="+100 //1ms reconnect,保证有足够频率的重连
         +"&"+Constants.SHUTDOWN_TIMEOUT_KEY+ "=1"//shutdown时间足够短，确保error日志输出
-        +"&reconnect.waring.period=100";//每隔多少warning记录一次
+        +"&reconnect.waring.period=500";//每隔多少warning记录一次
         try{
             Exchangers.connect(url);
         }catch (Exception e) {
@@ -148,7 +150,7 @@ public class ClientReconnectTest {
         }
         int count =  0;
         for (int i=0;i<100;i++){
-            count =  LogUtil.findMessage(Level.WARN, "client reconnect to ") ; 
+            count =  LogUtil.findMessage(Level.WARN, "client reconnect to ") ;
             if (count >=1){
                 break;
             }
@@ -157,14 +159,14 @@ public class ClientReconnectTest {
         Assert.assertTrue("warning message count must >= 1, real :"+count, count>= 1);
         DubboAppender.doStop();
     }
-    
+
     public Client startClient(int port , int reconnectPeriod) throws RemotingException{
-        final String url = "exchange://127.0.0.1:"+port + "/client.reconnect.test?check=false&"+Constants.RECONNECT_KEY+"="+reconnectPeriod;
+        final String url = "exchange://127.0.0.1:"+port + "/client.reconnect.test?check=false&"+Constants.RECONNECT_KEY+"="+reconnectPeriod + "&reconnect.waring.period=3000";
         return Exchangers.connect(url);
     }
-    
+
     public Server startServer(int port) throws RemotingException{
-        final String url = "exchange://127.0.0.1:"+port +"/client.reconnect.test";
+        final String url = "exchange://127.0.0.1:"+port +"/client.reconnect.test?" + "reconnect.waring.period=3000";
         return Exchangers.bind(url, new HandlerAdapter());
     }
     
