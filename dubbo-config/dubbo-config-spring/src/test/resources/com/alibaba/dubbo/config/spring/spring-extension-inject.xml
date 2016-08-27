@@ -22,6 +22,7 @@
 
     <!-- 当前应用信息配置 -->
     <dubbo:application name="demo-provider" />
+    <dubbo:provider delay="-1" />
     
     <!-- 连接注册中心配置 -->
     <dubbo:registry address="N/A" />
@@ -29,7 +30,7 @@
     <bean id="mockDao" class="com.alibaba.dubbo.config.spring.filter.MockDaoImpl" />
     
     <!-- 暴露服务配置 -->
-    <dubbo:service id="demoServiceConfig" interface="com.alibaba.dubbo.config.spring.api.DemoService" ref="demoService" filter="mymock,default" delay="-1" />
+    <dubbo:service id="demoServiceConfig" interface="com.alibaba.dubbo.config.spring.api.DemoService" ref="demoService" filter="mymock,default" />
      
     <bean id="demoService" class="com.alibaba.dubbo.config.spring.impl.DemoServiceImpl" />
  

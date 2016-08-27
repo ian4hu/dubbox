@@ -41,6 +41,7 @@ import com.alibaba.dubbo.rpc.cluster.support.FailfastCluster;
 import com.alibaba.dubbo.rpc.protocol.AbstractInvoker;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboInvoker;
 import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
+import org.junit.runner.RunWith;
 
 /**
  * RegistryProtocolTest
@@ -50,6 +51,7 @@ import com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol;
 public class RegistryProtocolTest {
     
     final private Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+    static final private RegistryProtocol registryProtocol = RegistryProtocol.getRegistryProtocol();
 
     static {
         SimpleRegistryExporter.exportIfAbsent(9090);
@@ -102,8 +104,7 @@ public class RegistryProtocolTest {
         URL newRegistryUrl = registryUrl.addParameter(Constants.EXPORT_KEY, serviceUrl);
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
         Exporter<?> exporter = protocol.export(invoker);
-        RegistryProtocol rprotocol = RegistryProtocol.getRegistryProtocol();
-        NotifyListener listener = getListener(rprotocol);
+        NotifyListener listener = getListener(registryProtocol);
         List<URL> urls = new ArrayList<URL>();
         urls.add(URL.valueOf("override://0.0.0.0/?timeout=1000"));
         urls.add(URL.valueOf("override://0.0.0.0/"+ service + "?timeout=100"));
@@ -130,8 +131,7 @@ public class RegistryProtocolTest {
         URL newRegistryUrl = registryUrl.addParameter(Constants.EXPORT_KEY, serviceUrl);
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
         Exporter<?> exporter = protocol.export(invoker);
-        RegistryProtocol rprotocol = RegistryProtocol.getRegistryProtocol();
-        NotifyListener listener = getListener(rprotocol);
+        NotifyListener listener = getListener(registryProtocol);
         List<URL> urls = new ArrayList<URL>();
         urls.add(URL.valueOf("override://0.0.0.0/com.alibaba.dubbo.registry.protocol.HackService?timeout=100"));
         listener.notify(urls);
@@ -155,9 +155,7 @@ public class RegistryProtocolTest {
     }
     
     private void destroyRegistryProtocol() throws InterruptedException {
-        Protocol registry = RegistryProtocol.getRegistryProtocol();
-        registry.destroy();
-        Thread.sleep(1000);
+        registryProtocol.destroy();
     }
 
     private NotifyListener getListener(RegistryProtocol protocol) throws Exception {

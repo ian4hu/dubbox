@@ -235,7 +235,7 @@ public class ConfigTest {
             List<URL> urls = registryService.getRegistered().get("com.alibaba.dubbo.config.spring.api.DemoService");
             assertNull(urls);
             int i = 0;
-            while ((i ++) < 60 && urls == null) {
+            while ((i ++) < 100 && urls == null) {
                 urls = registryService.getRegistered().get("com.alibaba.dubbo.config.spring.api.DemoService");
                 Thread.sleep(10);
             }
@@ -860,7 +860,7 @@ public class ConfigTest {
 
             Assert.assertEquals(port, service.getExportedUrls().get(0).getPort());
         } finally {
-            System.setProperty("dubbo.protocol.dubbo.port", dubboPort);
+            System.setProperty("dubbo.protocol.dubbo.port", dubboPort == null ? "" : dubboPort);
             if (service != null) {
                 service.unexport();
             }
