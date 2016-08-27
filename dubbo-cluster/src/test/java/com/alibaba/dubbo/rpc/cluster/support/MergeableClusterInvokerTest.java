@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,9 @@ public class MergeableClusterInvokerTest {
                     return MenuService.class;
                 }
                 if ("invoke".equals(method.getName())) {
-                    return new RpcResult(firstMenu);
+                    Menu menu = new Menu();
+                    menu.merge(firstMenu);
+                    return new RpcResult(menu);
                 }
                 return null;
             }
@@ -144,7 +147,10 @@ public class MergeableClusterInvokerTest {
                     return MenuService.class;
                 }
                 if ("invoke".equals(method.getName())) {
-                    return new RpcResult(secondMenu);
+                    Thread.sleep(200);
+                    Menu menu = new Menu();
+                    menu.merge(secondMenu);
+                    return new RpcResult(menu);
                 }
                 return null;
             }
@@ -170,6 +176,8 @@ public class MergeableClusterInvokerTest {
         Map<String, List<String>> expected = new HashMap<String, List<String>>();
         merge( expected, firstMenuMap );
         merge( expected, secondMenuMap );
+        sortItems(menu.getMenus());
+        sortItems(expected);
         Assert.assertEquals( expected, menu.getMenus() );
 
     }
@@ -237,6 +245,12 @@ public class MergeableClusterInvokerTest {
             } else {
                 first.put( entry.getKey(), entry.getValue() );
             }
+        }
+    }
+
+    static void sortItems(Map<String, List<String>> items) {
+        for (List<String> list: items.values()) {
+            Collections.sort(list);
         }
     }
 
