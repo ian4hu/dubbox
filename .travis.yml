@@ -17,8 +17,8 @@ jdk:
 before_script:
  - sudo service redis-server stop
  - redis-server --bind 127.0.0.1 --port 6379 --requirepass testpass --daemonize yes
- - "[ -f $HOME/.m2/zookeeper-3.4.8.tar.gz ] || wget http://www-eu.apache.org/dist/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz -o $HOME/.m2/zookeeper-3.4.8.tar.gz"
- - tar zxf $HOME/.m2/zookeeper-3.4.8.tar.gz
+ - "[ -f /home/travis/.m2/zookeeper-3.4.8.tar.gz ] || wget http://www-eu.apache.org/dist/zookeeper/zookeeper-3.4.8/zookeeper-3.4.8.tar.gz -o /home/travis/.m2/zookeeper-3.4.8.tar.gz"
+ - tar zxf /home/travis/.m2/zookeeper-3.4.8.tar.gz
  - cp zookeeper-3.4.8/conf/zoo_sample.cfg zookeeper-3.4.8/conf/zoo.cfg
  - bash zookeeper-3.4.8/bin/zkServer.sh start
  - rm -rf $HOME/.m2/repository/com/alibaba/dubbo*
