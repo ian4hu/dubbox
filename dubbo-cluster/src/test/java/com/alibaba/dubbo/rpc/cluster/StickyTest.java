@@ -71,7 +71,7 @@ public class StickyTest {
             +"&"+Constants.CLUSTER_STICKY_KEY+"=true"
             );
     
-    int runs = 1;
+    int runs = 2;
     @Test
     public void testStickyNoCheck() {
         int count = testSticky(null,false);
