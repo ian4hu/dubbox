@@ -60,6 +60,11 @@ public class MyInvoker<T> implements Invoker<T> {
         RpcResult result = new RpcResult();
         if (hasException == false) {
             result.setValue("alibaba");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RpcException(e);
+            }
             return result;
         } else {
             result.setException(new RuntimeException("mocked exception"));
