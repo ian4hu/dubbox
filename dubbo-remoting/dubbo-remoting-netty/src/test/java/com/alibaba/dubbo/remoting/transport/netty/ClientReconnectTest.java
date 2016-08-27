@@ -72,7 +72,7 @@ public class ClientReconnectTest {
         int port = NetUtils.getAvailablePort();
         DubboAppender.doStart();
         String url = "exchange://127.0.0.2:"+port + "/client.reconnect.test?check=false&"
-        +Constants.RECONNECT_KEY+"="+500 + //1ms reconnect,保证有足够频率的重连
+        +Constants.RECONNECT_KEY+"="+800 + //800ms reconnect,保证有足够频率的重连
         "&reconnect.waring.period=500";
         try{
             Exchangers.connect(url);
