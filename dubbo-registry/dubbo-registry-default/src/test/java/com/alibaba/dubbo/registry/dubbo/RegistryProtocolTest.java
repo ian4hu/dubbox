@@ -150,14 +150,14 @@ public class RegistryProtocolTest {
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
         Exporter<?> exporter = protocol.export(invoker);
         destroyRegistryProtocol();
-        Thread.sleep(1000);
         assertFalse(exporter.getInvoker().isAvailable());
         
     }
     
-    private void destroyRegistryProtocol(){
+    private void destroyRegistryProtocol() throws InterruptedException {
         Protocol registry = RegistryProtocol.getRegistryProtocol();
         registry.destroy();
+        Thread.sleep(1000);
     }
 
     private NotifyListener getListener(RegistryProtocol protocol) throws Exception {
