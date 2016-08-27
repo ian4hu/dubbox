@@ -116,7 +116,7 @@ public class RegistryProtocolTest {
         
         exporter.unexport();
         assertEquals(false, exporter.getInvoker().isAvailable());
-        destroyRegistryProtocol();
+        //destroyRegistryProtocol();
         
     }
     
@@ -138,7 +138,7 @@ public class RegistryProtocolTest {
         assertEquals(true, exporter.getInvoker().isAvailable());
         assertEquals(null, exporter.getInvoker().getUrl().getParameter("timeout"));
         exporter.unexport();
-        destroyRegistryProtocol();
+        //destroyRegistryProtocol();
     }
     
     /**
