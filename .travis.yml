@@ -1,4 +1,5 @@
-sudo: false
+# to stop redis
+sudo: true
 language: java
 # skip default install
 install: true
