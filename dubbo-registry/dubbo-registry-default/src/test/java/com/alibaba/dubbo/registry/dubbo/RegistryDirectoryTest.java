@@ -25,7 +25,6 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.script.ScriptEngineManager;
 
-import com.alibaba.dubbo.rpc.cluster.router.MockInvokersSelector;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -551,12 +550,12 @@ public class RegistryDirectoryTest {
         List<Router> routers = registryDirectory.getRouters();
         //default invocation selector
         Assert.assertEquals(1+1, routers.size());
-        Assert.assertEquals(ScriptRouter.class, routers.get(0).getClass());
+        Assert.assertTrue(ScriptRouter.class == routers.get(1).getClass() || ScriptRouter.class == routers.get(0).getClass());
 
         registryDirectory.notify(new ArrayList<URL>());
         routers = registryDirectory.getRouters();
         Assert.assertEquals(1 + 1, routers.size());
-        Assert.assertEquals(ScriptRouter.class, routers.get(0).getClass());
+        Assert.assertTrue(ScriptRouter.class == routers.get(1).getClass() || ScriptRouter.class == routers.get(0).getClass());
 
         serviceUrls.clear();
         serviceUrls.add(routerurl.addParameter(Constants.ROUTER_KEY, Constants.ROUTER_TYPE_CLEAR));

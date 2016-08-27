@@ -22,6 +22,7 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcResult;
 import com.alibaba.dubbo.rpc.cluster.Directory;
+import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -47,44 +49,23 @@ public class MergeableClusterInvokerTest {
     private Invocation invocation = EasyMock.createMock( Invocation.class );
 
     private MergeableClusterInvoker<MenuService> mergeableClusterInvoker;
-    
+
+    private String[] list1 = {"10", "11", "12"};
+    private String[] list2 = {"20", "21", "22"};
+    private String[] list3 = {"23", "24", "25"};
+    private String[] list4 = {"30", "31", "32"};
+
     private Map<String, List<String>> firstMenuMap = new HashMap<String, List<String>>() {
         {
-            put( "1", new ArrayList<String>() {
-                {
-                    add( "10" );
-                    add( "11" );
-                    add( "12" );
-                }
-            } );
-            put( "2", new ArrayList<String>() {
-
-                {
-                    add( "20" );
-                    add( "21" );
-                    add( "22" );
-                }
-            } );
+            put( "1", Arrays.asList(list1));
+            put( "2", Arrays.asList(list2));
         }
     };
+
     private Map<String, List<String>> secondMenuMap = new HashMap<String, List<String>>() {
         {
-            put( "2", new ArrayList<String>() {
-
-                {
-                    add( "23" );
-                    add( "24" );
-                    add( "25" );
-                }
-            } );
-            put( "3", new ArrayList<String>() {
-
-                {
-                    add( "30" );
-                    add( "31" );
-                    add( "32" );
-                }
-            } );
+            put( "2", Arrays.asList(list3));
+            put( "3", Arrays.asList(list4));
         }
     };
     
@@ -129,9 +110,7 @@ public class MergeableClusterInvokerTest {
                     return MenuService.class;
                 }
                 if ("invoke".equals(method.getName())) {
-                    Menu menu = new Menu();
-                    menu.merge(firstMenu);
-                    return new RpcResult(menu);
+                    return new RpcResult(firstMenu);
                 }
                 return null;
             }
@@ -147,10 +126,7 @@ public class MergeableClusterInvokerTest {
                     return MenuService.class;
                 }
                 if ("invoke".equals(method.getName())) {
-                    Thread.sleep(200);
-                    Menu menu = new Menu();
-                    menu.merge(secondMenu);
-                    return new RpcResult(menu);
+                    return new RpcResult(secondMenu);
                 }
                 return null;
             }
@@ -176,10 +152,16 @@ public class MergeableClusterInvokerTest {
         Map<String, List<String>> expected = new HashMap<String, List<String>>();
         merge( expected, firstMenuMap );
         merge( expected, secondMenuMap );
-        sortItems(menu.getMenus());
-        sortItems(expected);
-        Assert.assertEquals( expected, menu.getMenus() );
-
+        TestCase.assertEquals(expected.keySet(), menu.getMenus().keySet());
+        for (String key : expected.keySet()) {
+            // FIXME: cannot guarantee the sequence of the merge result, check implementation in
+            // MergeableClusterInvoker#invoke
+            List<String> values1 = new ArrayList<String>(expected.get(key));
+            List<String> values2 = new ArrayList<String>(menu.getMenus().get(key));
+            Collections.sort(values1);
+            Collections.sort(values2);
+            TestCase.assertEquals(values1, values2);
+        }
     }
 
     @Test
@@ -243,14 +225,8 @@ public class MergeableClusterInvokerTest {
             if ( value != null ) {
                 value.addAll( entry.getValue() );
             } else {
-                first.put( entry.getKey(), entry.getValue() );
+                first.put( entry.getKey(), new ArrayList<String>(entry.getValue()) );
             }
-        }
-    }
-
-    static void sortItems(Map<String, List<String>> items) {
-        for (List<String> list: items.values()) {
-            Collections.sort(list);
         }
     }
 

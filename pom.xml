@@ -16,9 +16,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!--<parent> <groupId>com.alibaba</groupId> <artifactId>opensesame</artifactId>
-		<version>2.0</version> </parent> -->
-	<groupId>com.alibaba</groupId>
+    <groupId>com.alibaba</groupId>
 	<artifactId>dubbo-parent</artifactId>
 	<version>2.8.4</version>
 	<packaging>pom</packaging>
@@ -126,7 +124,7 @@
 		<easymock_version>3.0</easymock_version>
 		<jmockit_version>0.999.8</jmockit_version>
 		<!-- Build args -->
-		<!--<argline>-server -Xms64m -Xmx64m -XX:PermSize=64m -XX:MaxPermSize=64m</argline> -->
+		<argline>-server -Xms64m -Xmx256m -XX:PermSize=64m -XX:MaxPermSize=128m -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true</argline>
 		<skip_maven_deploy>false</skip_maven_deploy>
 		<updateReleaseInfo>true</updateReleaseInfo>
 		<project.build.sourceEncoding>${file_encoding}</project.build.sourceEncoding>
@@ -643,12 +641,12 @@
 	</build>
 
 	<issueManagement>
-		<system>jira</system>
-		<url>http://code.alibabatech.com/jira/browse/DUBBO</url>
+		<system>github</system>
+		<url>https://github.com/alibaba/dubbo/issues</url>
 	</issueManagement>
 	<scm>
-		<url>http://code.alibabatech.com/svn/dubbo/trunk</url>
-		<connection>scm:svn:http://code.alibabatech.com/svn/dubbo/trunk</connection>
+		<url>https://github.com/alibaba/dubbo</url>
+		<connection>https://github.com/alibaba/dubbo.git</connection>
 	</scm>
 	<mailingLists>
 		<mailingList>
@@ -723,5 +721,14 @@
 			</roles>
 			<timezone>+8</timezone>
 		</developer>
+        <developer>
+            <name>WuXiaoFei(Teaey)</name>
+            <id>xiaofei.wxf</id>
+            <email>xiaofei.wxf (AT) alibaba-inc.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
 	</developers>
 </project>
