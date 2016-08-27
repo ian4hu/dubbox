@@ -16,6 +16,7 @@
 package com.alibaba.dubbo.registry.dubbo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,12 +145,13 @@ public class RegistryProtocolTest {
      *测试destory registry ，exporter是否能够正常被destroy掉 
      */
     @Test
-    public void testDestoryRegistry(){
+    public void testDestoryRegistry() throws InterruptedException {
         URL newRegistryUrl = registryUrl.addParameter(Constants.EXPORT_KEY, serviceUrl);
         Invoker<RegistryProtocolTest> invoker = new MockInvoker<RegistryProtocolTest>(RegistryProtocolTest.class, newRegistryUrl);
         Exporter<?> exporter = protocol.export(invoker);
         destroyRegistryProtocol();
-        assertEquals(false, exporter.getInvoker().isAvailable());
+        Thread.sleep(1000);
+        assertFalse(exporter.getInvoker().isAvailable());
         
     }
     
